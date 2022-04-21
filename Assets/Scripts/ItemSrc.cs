@@ -5,33 +5,56 @@ public class ItemSrc : MonoBehaviour
     [SerializeField] private GameObject _shadow;
     [SerializeField] private Item _srcObj;
     [SerializeField] private bool _stateShadow;
+    private int _id;
+    public Item SrcObj
+    {
+        get
+        {
+            return _srcObj;
+        }
+    }
+    public int ID
+    {
+        get
+        {
+            return _id;
+        }
+        set
+        {
+            _id = value;
+        }
+    }
     public bool StateShadow
     {
         get
         {
             return _stateShadow;
         }
-        set
-        {
-            _stateShadow = value;
-        }
     }
-    private int _id;
-
+    
     private void Start()
     {
-        this.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _srcObj.Icon;
-        _id = _srcObj.ID;
+        if (this.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite == null)
+        {
+            this.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = _srcObj.Icon;
+        }
         CheckHide();
-        Debug.Log(_stateShadow);
-        Debug.Log(_id);
     }
-
+    public void ChangeShadowState() // Смена состояния тени на ячейке
+    {
+        _stateShadow = !_stateShadow;
+        CheckHide();
+    }
     private void CheckHide() // Проверка состояния объекта
     {
         if (_stateShadow == true)
             _shadow.SetActive(true);
         else
             _shadow.SetActive(false);
+    }
+
+    public void OnTriggerExit2D(Collider2D collision)
+    {
+        collision.GetComponent<ItemSrc>().ChangeShadowState(); // Смена состояния на соседней ячейке
     }
 }
